@@ -30,6 +30,8 @@ class CupertinoStackViewController {
 
   final List<_ListPair> _map = List<_ListPair>();
 
+  String get currentNavigation => _map.first._navigation;
+
   CupertinoStackViewController(
     this._navigatorState,
     this._builders, {
@@ -62,6 +64,16 @@ class CupertinoStackViewController {
         _map[i]._cupertinoStackViewState.move(_index == 0 ? CupertinoStackViewStatus.FRONT : _index == 1 ? CupertinoStackViewStatus.BACK : CupertinoStackViewStatus.DISAPPEAR);
       }
       _index++;
+    }
+  }
+
+  ///Use this method to go back to the primary [CupertinoStackView] in the Cupertino StackView system.
+  Future backToPrimary() async {
+    while (_map.length != 1) {
+      _navigatorState.currentState.pop();
+      _map.removeAt(0);
+      _organise();
+      await Future.delayed(duration);
     }
   }
 
