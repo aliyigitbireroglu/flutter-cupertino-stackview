@@ -78,8 +78,8 @@ class CupertinoStackViewController {
   }
 
   ///Use this method to go back one [CupertinoStackView] in the Cupertino StackView system.
-  Future back(BuildContext context, dynamic parameters) async {
-    await navigate(_map[1]._navigation, context, parameters);
+  Future back() async {
+    await navigate(_map[1]._navigation, null, null);
   }
 
   ///Use this method to go to a [CupertinoStackView] in the Cupertino StackView system.

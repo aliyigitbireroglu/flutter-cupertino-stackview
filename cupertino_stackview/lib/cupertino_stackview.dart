@@ -28,6 +28,9 @@ class CupertinoStackView extends StatefulWidget {
   ///The color that is to be shown when this [CupertinoStackView] moves behind the Cupertino StackView system.
   final Color _backgroundColor;
 
+  ///Set this value to false you don't want the [_child] to be dismissible by vertical dragging..
+  final bool isDismissible;
+
   ///The clipping radius that is to be used to clip this [CupertinoStackView] when it moves behind the Cupertino StackView system. The default value corresponds to the default iOS 13 value.
   final Radius radius;
 
@@ -37,6 +40,7 @@ class CupertinoStackView extends StatefulWidget {
     this._child,
     this._backgroundColor, {
     Key key,
+    this.isDismissible: true,
     this.radius: const Radius.circular(10.0),
   }) : super(key: key);
 
@@ -47,6 +51,7 @@ class CupertinoStackView extends StatefulWidget {
 }
 
 class CupertinoStackViewState extends State<CupertinoStackView> with SingleTickerProviderStateMixin {
+  final GlobalKey _dismissible = GlobalKey();
   AnimationController _animationController;
   Animation<double> _scale;
   Animation<Offset> _firstOffset;
@@ -139,6 +144,11 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
     }
   }
 
+  Future<bool> _isDismissed(DismissDirection dismissDirection) async {
+    cupertinoStackViewController.back();
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -149,13 +159,27 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
               widget._backgroundColor,
               widget.radius,
             )
-          : _Positioner(
-              _Clipper(
-                widget._child,
-                widget._backgroundColor,
-                widget.radius,
-              ),
-            ),
+          : widget.isDismissible
+              ? Dismissible(
+                  key: _dismissible,
+                  direction: DismissDirection.down,
+                  dismissThresholds: {DismissDirection.down: 0.5},
+                  confirmDismiss: _isDismissed,
+                  child: _Positioner(
+                    _Clipper(
+                      widget._child,
+                      widget._backgroundColor,
+                      widget.radius,
+                    ),
+                  ),
+                )
+              : _Positioner(
+                  _Clipper(
+                    widget._child,
+                    widget._backgroundColor,
+                    widget.radius,
+                  ),
+                ),
       builder: (BuildContext context, Widget cachedWidget) {
         return Transform.translate(
           offset: _animationController.value < 0.5 ? _firstOffset.value : _secondOffset.value,

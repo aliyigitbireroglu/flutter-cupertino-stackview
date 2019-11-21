@@ -78,7 +78,8 @@ CupertinoStackView(
   Scaffold(...),    //_child
   Colors.black,     //_backgroundColor 
  {Key key,
-  radius    : Radius.circular(10.0)})
+  isDismissible : true,
+  radius        : Radius.circular(10.0)})
 ```
 
 **Further Explanations:**
@@ -99,4 +100,3 @@ Cheers.
 <br><br>
 <img align="right" src="https://www.cosmossoftware.coffee/Common/Images/CosmosSoftwareIconTransparent.png" width="150" height="150"/>
 <br><br>
-

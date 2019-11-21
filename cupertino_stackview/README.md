@@ -73,7 +73,8 @@ CupertinoStackView(
   Scaffold(...),    //_child
   Colors.black,     //_backgroundColor 
  {Key key,
-  radius    : Radius.circular(10.0)})
+  isDismissible : true,
+  radius        : Radius.circular(10.0)})
 ```
 
 **Further Explanations:**

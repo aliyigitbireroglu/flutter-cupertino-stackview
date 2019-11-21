@@ -111,7 +111,7 @@ class _MyPageState extends State<MyPage> {
                   ),
                   useCache: true,
                   onTapUp: (_) {
-                    cupertinoStackViewController.back(context, null);
+                    cupertinoStackViewController.back();
                   },
                 ),
           title: Text(pageInfos[widget.index].navigation),
@@ -250,6 +250,7 @@ class _MyPageState extends State<MyPage> {
         ),
       ),
       Colors.black,
+      isDismissible: widget.index != pageInfos.length - 1,
     );
   }
 }
