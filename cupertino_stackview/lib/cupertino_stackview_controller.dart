@@ -29,8 +29,11 @@ class CupertinoStackViewController {
   double width;
 
   final List<_ListPair> _map = List<_ListPair>();
+  final List<_ListPair> _siblingMap = List<_ListPair>();
+  final Map<String, BuildContext> _contexts = Map<String, BuildContext>();
 
   String get currentNavigation => _map.first._navigation;
+  BuildContext get currentContext => _contexts[currentNavigation];
 
   CupertinoStackViewController(
     this._navigatorState,
@@ -42,11 +45,27 @@ class CupertinoStackViewController {
     return _map.indexWhere((_ListPair navigationStackStatePair) => navigationStackStatePair._navigation == navigation) > -1;
   }
 
+  bool _isSiblingMapped(String navigation) {
+    return _siblingMap.indexWhere((_ListPair navigationStackStatePair) => navigationStackStatePair._navigation == navigation) > -1;
+  }
+
+  bool _hasSibling(String navigation) {
+    return _siblingMap.indexWhere((_ListPair navigationStackStatePair) => navigationStackStatePair._navigation == navigation) > -1;
+  }
+
   void introduce(String navigation, CupertinoStackViewState cupertinoStackViewState) {
     if (_isMapped(navigation)) {
       _map.firstWhere((_ListPair navigationStackStatePair) => navigationStackStatePair._navigation == navigation)._cupertinoStackViewState = cupertinoStackViewState;
     } else {
       _map.insert(0, _ListPair(navigation, cupertinoStackViewState));
+    }
+  }
+
+  void introduceAsSibling(String navigation, CupertinoStackViewState cupertinoStackViewState) {
+    if (_isSiblingMapped(navigation)) {
+      _siblingMap.firstWhere((_ListPair navigationStackStatePair) => navigationStackStatePair._navigation == navigation)._cupertinoStackViewState = cupertinoStackViewState;
+    } else {
+      _siblingMap.insert(0, _ListPair(navigation, cupertinoStackViewState));
     }
   }
 
@@ -62,8 +81,20 @@ class CupertinoStackViewController {
     for (int i = 0; i < _map.length; i++) {
       if (_map[i]._cupertinoStackViewState != null) {
         _map[i]._cupertinoStackViewState.move(_index == 0 ? CupertinoStackViewStatus.FRONT : _index == 1 ? CupertinoStackViewStatus.BACK : CupertinoStackViewStatus.DISAPPEAR);
+        if (_hasSibling(_map[i]._navigation)) {
+          _organiseSiblings(_map[i]._navigation, _index);
+        }
       }
       _index++;
+    }
+  }
+
+  void _organiseSiblings(String navigation, int index) {
+    List<_ListPair> _siblings = _siblingMap.where((_ListPair navigationStackStatePair) => navigationStackStatePair._navigation == navigation).toList();
+    for (int i = 0; i < _siblings.length; i++) {
+      if (_siblings[i]._cupertinoStackViewState != null) {
+        _siblings[i]._cupertinoStackViewState.move(index == 0 ? CupertinoStackViewStatus.FRONT : index == 1 ? CupertinoStackViewStatus.BACK : CupertinoStackViewStatus.DISAPPEAR);
+      }
     }
   }
 
@@ -71,6 +102,7 @@ class CupertinoStackViewController {
   Future backToPrimary() async {
     while (_map.length != 1) {
       _navigatorState.currentState.pop();
+      _contexts.remove(currentNavigation);
       _map.removeAt(0);
       _organise();
       await Future.delayed(duration);
@@ -87,12 +119,14 @@ class CupertinoStackViewController {
     if (_isMapped(targetNavigation)) {
       while (_map.first._navigation != targetNavigation) {
         _navigatorState.currentState.pop();
+        _contexts.remove(currentNavigation);
         _map.removeAt(0);
         _organise();
         await Future.delayed(duration);
       }
     } else {
       _map.insert(0, _ListPair(targetNavigation, null));
+      _contexts[targetNavigation] = context;
       _organise();
       showCupertinoModalPopup(
           context: context,

@@ -18,6 +18,7 @@ export 'package:cupertino_stackview/misc.dart';
 class CupertinoStackView extends StatefulWidget {
   ///Set this value to true if the [_child] is the first page of the Cupertino StackView system. In theory, there should only be one [CupertinoStackView] with [_isPrimary] set to true.
   final bool _isPrimary;
+  bool get isPrimary => _isPrimary;
 
   ///The navigation path that is to be mapped to this [CupertinoStackView] in the Cupertino StackView system. This value has to be unique for each [CupertinoStackView].
   final String _navigation;
@@ -28,11 +29,17 @@ class CupertinoStackView extends StatefulWidget {
   ///The color that is to be shown when this [CupertinoStackView] moves behind the Cupertino StackView system.
   final Color _backgroundColor;
 
-  ///Set this value to false you don't want the [_child] to be dismissible by vertical dragging..
+  ///The navigation path that is to link this [CupertinoStackView] to another [CupertinoStackView]. Leave null if you don't want a link.
+  final String siblingNavigation;
+
+  ///Set this value to false you don't want the [_child] to be dismissible by vertical dragging.
   final bool isDismissible;
 
   ///The clipping radius that is to be used to clip this [CupertinoStackView] when it moves behind the Cupertino StackView system. The default value corresponds to the default iOS 13 value.
   final Radius radius;
+
+  ///Set this value to true if you don't want this [CupertinoStackView] to be clipped via [radius] while in the front of the Cupertino StackView system.
+  final bool ignoreRadiusWhenFront;
 
   const CupertinoStackView(
     this._isPrimary,
@@ -40,8 +47,10 @@ class CupertinoStackView extends StatefulWidget {
     this._child,
     this._backgroundColor, {
     Key key,
+    this.siblingNavigation: "",
     this.isDismissible: true,
     this.radius: const Radius.circular(10.0),
+    this.ignoreRadiusWhenFront: false,
   }) : super(key: key);
 
   @override
@@ -57,6 +66,10 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
   Animation<Offset> _firstOffset;
   Animation<Offset> _secondOffset;
   CupertinoStackViewStatus _currentStatus;
+
+  double get _radius => widget.radius.x;
+  double get _dynamicRadius => _radius * _animationController.value.clamp(0.0, 1.0);
+  Radius get _realRadius => widget.ignoreRadiusWhenFront ? Radius.circular(_dynamicRadius) : widget.radius;
 
   @override
   void initState() {
@@ -107,7 +120,11 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
       ),
     );
     _currentStatus = CupertinoStackViewStatus.FRONT;
-    cupertinoStackViewController.introduce(widget._navigation, this);
+    if (widget.siblingNavigation.isEmpty) {
+      cupertinoStackViewController.introduce(widget._navigation, this);
+    } else {
+      cupertinoStackViewController.introduceAsSibling(widget.siblingNavigation, this);
+    }
   }
 
   @override
@@ -154,11 +171,23 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
     return AnimatedBuilder(
       animation: _animationController,
       child: widget._isPrimary
-          ? _Clipper(
-              widget._child,
-              widget._backgroundColor,
-              widget.radius,
-            )
+          ? widget.ignoreRadiusWhenFront
+              ? AnimatedBuilder(
+                  animation: _animationController,
+                  child: widget._child,
+                  builder: (BuildContext buildContext, Widget cachedWidget) {
+                    return _Clipper(
+                      cachedWidget,
+                      widget._backgroundColor,
+                      _realRadius,
+                    );
+                  },
+                )
+              : _Clipper(
+                  widget._child,
+                  widget._backgroundColor,
+                  widget.radius,
+                )
           : widget.isDismissible
               ? Dismissible(
                   key: _dismissible,
@@ -166,19 +195,43 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
                   dismissThresholds: {DismissDirection.down: 0.5},
                   confirmDismiss: _isDismissed,
                   child: _Positioner(
-                    _Clipper(
-                      widget._child,
-                      widget._backgroundColor,
-                      widget.radius,
-                    ),
+                    widget.ignoreRadiusWhenFront
+                        ? AnimatedBuilder(
+                            animation: _animationController,
+                            child: widget._child,
+                            builder: (BuildContext buildContext, Widget cachedWidget) {
+                              return _Clipper(
+                                cachedWidget,
+                                widget._backgroundColor,
+                                _realRadius,
+                              );
+                            },
+                          )
+                        : _Clipper(
+                            widget._child,
+                            widget._backgroundColor,
+                            widget.radius,
+                          ),
                   ),
                 )
               : _Positioner(
-                  _Clipper(
-                    widget._child,
-                    widget._backgroundColor,
-                    widget.radius,
-                  ),
+                  widget.ignoreRadiusWhenFront
+                      ? AnimatedBuilder(
+                          animation: _animationController,
+                          child: widget._child,
+                          builder: (BuildContext buildContext, Widget cachedWidget) {
+                            return _Clipper(
+                              cachedWidget,
+                              widget._backgroundColor,
+                              _realRadius,
+                            );
+                          },
+                        )
+                      : _Clipper(
+                          widget._child,
+                          widget._backgroundColor,
+                          widget.radius,
+                        ),
                 ),
       builder: (BuildContext context, Widget cachedWidget) {
         return Transform.translate(
