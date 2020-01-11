@@ -41,6 +41,12 @@ class CupertinoStackView extends StatefulWidget {
   ///Set this value to true if you don't want this [CupertinoStackView] to be clipped via [radius] while in the front of the Cupertino StackView system.
   final bool ignoreRadiusWhenFront;
 
+  ///Callback for when this [CupertinoStackView] moves.
+  final Function(CupertinoStackViewStatus) onMoved;
+
+  ///Callback for when this [CupertinoStackView] is dismissed.
+  final Function onDismissed;
+
   const CupertinoStackView(
     this._isPrimary,
     this._navigation,
@@ -51,6 +57,8 @@ class CupertinoStackView extends StatefulWidget {
     this.isDismissible: true,
     this.radius: const Radius.circular(10.0),
     this.ignoreRadiusWhenFront: false,
+    this.onMoved,
+    this.onDismissed,
   }) : super(key: key);
 
   @override
@@ -159,10 +167,16 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
         _animationController.animateTo(1.0);
         break;
     }
+    if (widget.onMoved != null) {
+      widget.onMoved(targetStatus);
+    }
   }
 
   Future<bool> _isDismissed(DismissDirection dismissDirection) async {
-    cupertinoStackViewController.back();
+    cupertinoStackViewController.back(navigation: widget._navigation, isDismissed: true);
+    if (widget.onDismissed != null) {
+      widget.onDismissed();
+    }
     return false;
   }
 

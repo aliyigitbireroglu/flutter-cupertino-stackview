@@ -35,10 +35,18 @@ class CupertinoStackViewController {
   String get currentNavigation => _map.first._navigation;
   BuildContext get currentContext => _contexts[currentNavigation];
 
+  ///Callback for when any [CupertinoStackView] moves.
+  final Function(String, CupertinoStackViewStatus) onMoved;
+
+  ///Callback for when any [CupertinoStackView] is dismissed.
+  final Function(String) onDismissed;
+
   CupertinoStackViewController(
     this._navigatorState,
     this._builders, {
     this.duration: const Duration(milliseconds: 250),
+    this.onMoved,
+    this.onDismissed,
   });
 
   bool _isMapped(String navigation) {
@@ -81,6 +89,9 @@ class CupertinoStackViewController {
     for (int i = 0; i < _map.length; i++) {
       if (_map[i]._cupertinoStackViewState != null) {
         _map[i]._cupertinoStackViewState.move(_index == 0 ? CupertinoStackViewStatus.FRONT : _index == 1 ? CupertinoStackViewStatus.BACK : CupertinoStackViewStatus.DISAPPEAR);
+        if (onMoved != null) {
+          onMoved(_map[i]._navigation, _index == 0 ? CupertinoStackViewStatus.FRONT : _index == 1 ? CupertinoStackViewStatus.BACK : CupertinoStackViewStatus.DISAPPEAR);
+        }
         if (_hasSibling(_map[i]._navigation)) {
           _organiseSiblings(_map[i]._navigation, _index);
         }
@@ -94,6 +105,9 @@ class CupertinoStackViewController {
     for (int i = 0; i < _siblings.length; i++) {
       if (_siblings[i]._cupertinoStackViewState != null) {
         _siblings[i]._cupertinoStackViewState.move(index == 0 ? CupertinoStackViewStatus.FRONT : index == 1 ? CupertinoStackViewStatus.BACK : CupertinoStackViewStatus.DISAPPEAR);
+        if (onMoved != null) {
+          onMoved(_siblings[i]._navigation, index == 0 ? CupertinoStackViewStatus.FRONT : index == 1 ? CupertinoStackViewStatus.BACK : CupertinoStackViewStatus.DISAPPEAR);
+        }
       }
     }
   }
@@ -110,8 +124,11 @@ class CupertinoStackViewController {
   }
 
   ///Use this method to go back one [CupertinoStackView] in the Cupertino StackView system.
-  Future back() async {
+  Future back({String navigation, bool isDismissed: false}) async {
     await navigate(_map[1]._navigation, null, null);
+    if (isDismissed && onDismissed != null) {
+      onDismissed(navigation);
+    }
   }
 
   ///Use this method to go to a [CupertinoStackView] in the Cupertino StackView system.
