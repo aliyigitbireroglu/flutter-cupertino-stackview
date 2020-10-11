@@ -77,7 +77,7 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
 
   double get _radius => widget.radius.x;
   double get _dynamicRadius => _radius * _animationController.value.clamp(0.0, 1.0);
-  Radius get _realRadius => widget.ignoreRadiusWhenFront ? Radius.circular(_dynamicRadius) : widget.radius;
+  Radius get _realRadius => widget.isPrimary || widget.ignoreRadiusWhenFront ? Radius.circular(_dynamicRadius) : widget.radius;
 
   @override
   void initState() {
@@ -185,23 +185,17 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
     return AnimatedBuilder(
       animation: _animationController,
       child: widget._isPrimary
-          ? widget.ignoreRadiusWhenFront
-              ? AnimatedBuilder(
-                  animation: _animationController,
-                  child: widget._child,
-                  builder: (BuildContext buildContext, Widget cachedWidget) {
-                    return _Clipper(
-                      cachedWidget,
-                      widget._backgroundColor,
-                      _realRadius,
-                    );
-                  },
-                )
-              : _Clipper(
-                  widget._child,
+          ? AnimatedBuilder(
+              animation: _animationController,
+              child: widget._child,
+              builder: (BuildContext buildContext, Widget cachedWidget) {
+                return _Clipper(
+                  cachedWidget,
                   widget._backgroundColor,
-                  widget.radius,
-                )
+                  _realRadius,
+                );
+              },
+            )
           : widget.isDismissible
               ? Dismissible(
                   key: _dismissible,

@@ -1,3 +1,11 @@
+## [1.0.6] - 11.10.2020
+
+* Regular maintenance.
+
+## [1.0.5] - 01.06.2020
+
+* Minor changes.
+
 ## [1.0.4] - 11.01.2020
 
 * Minor changes.

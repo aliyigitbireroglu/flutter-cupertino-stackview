@@ -98,92 +98,99 @@ class _MyPageState extends State<MyPage> {
       widget.index == 0,
       pageInfos[widget.index].navigation,
       Scaffold(
-        backgroundColor: const Color(0xFF29292A),
+        backgroundColor: const Color(0xFFF2F2F7),
         appBar: AppBar(
-          backgroundColor: const Color(0xFF1B1D1E),
+          backgroundColor: const Color(0xFFF9F9F9),
           leading: widget.index == 0
               ? null
               : SpringButton(
                   SpringButtonType.OnlyScale,
                   Icon(
                     Icons.chevron_left,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   useCache: true,
                   onTapUp: (_) {
                     cupertinoStackViewController.back();
                   },
                 ),
-          title: Text(pageInfos[widget.index].navigation),
+          title: Text(
+            pageInfos[widget.index].navigation,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
-        body: Column(
-          children: [
-            MyPadding(
-              Stack(
-                children: [
-                  Container(
-                    constraints: BoxConstraints.expand(height: 200),
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(const Radius.circular(20)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black,
-                          blurRadius: 50.0,
-                          spreadRadius: 2.5,
-                        ),
-                      ],
-                    ),
-                  ),
-                  ClipRRect(
-                    borderRadius: const BorderRadius.all(const Radius.circular(20)),
-                    child: Container(
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              MyPadding(
+                Stack(
+                  children: [
+                    Container(
                       constraints: BoxConstraints.expand(height: 200),
                       decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                            "assets/" + widget.index.toString() + ".jpeg",
-                          ),
-                          fit: BoxFit.cover,
-                        ),
+                        borderRadius: const BorderRadius.all(const Radius.circular(20)),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.75),
-                            blurRadius: 100.0,
-                            spreadRadius: 5.0,
+                            color: Colors.black,
+                            blurRadius: 50.0,
+                            spreadRadius: 2.5,
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            MyPadding(
-              RichText(
-                text: TextSpan(
-                  text: pageInfos[widget.index].title + "\n\n",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: pageInfos[widget.index].text,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
+                    ClipRRect(
+                      borderRadius: const BorderRadius.all(const Radius.circular(20)),
+                      child: Container(
+                        constraints: BoxConstraints.expand(height: 200),
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                              "assets/" + widget.index.toString() + ".jpeg",
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.75),
+                              blurRadius: 100.0,
+                              spreadRadius: 5.0,
+                            ),
+                          ],
+                        ),
                       ),
-                    )
+                    ),
                   ],
                 ),
-                textAlign: TextAlign.justify,
               ),
-            ),
-            if (widget.index != pageInfos.length - 1)
-              Expanded(
-                child: Align(
-                  alignment: Alignment(0.0, 0.75),
+              MyPadding(
+                RichText(
+                  text: TextSpan(
+                    text: pageInfos[widget.index].title + "\n\n",
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: pageInfos[widget.index].text,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                        ),
+                      )
+                    ],
+                  ),
+                  textAlign: TextAlign.justify,
+                ),
+              ),
+              if (widget.index != pageInfos.length - 1)
+                Align(
+                  alignment: Alignment(0.0, 0.5),
                   child: MyPadding(
                     SpringButton(
                       SpringButtonType.OnlyScale,
@@ -199,7 +206,7 @@ class _MyPageState extends State<MyPage> {
                             "Open Stack",
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -212,11 +219,9 @@ class _MyPageState extends State<MyPage> {
                     ),
                   ),
                 ),
-              ),
-            if (widget.index == pageInfos.length - 1)
-              Expanded(
-                child: Align(
-                  alignment: Alignment(0.0, 0.75),
+              if (widget.index == pageInfos.length - 1)
+                Align(
+                  alignment: Alignment(0.0, 0.5),
                   child: MyPadding(
                     SpringButton(
                       SpringButtonType.OnlyScale,
@@ -232,7 +237,7 @@ class _MyPageState extends State<MyPage> {
                             "Go to Home",
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -245,8 +250,8 @@ class _MyPageState extends State<MyPage> {
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
       Colors.black,
@@ -278,7 +283,7 @@ class MyPadding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(40),
+      padding: const EdgeInsets.all(32),
       child: _child,
     );
   }
