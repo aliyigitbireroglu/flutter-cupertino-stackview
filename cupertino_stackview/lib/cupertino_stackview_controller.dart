@@ -147,6 +147,7 @@ class CupertinoStackViewController {
       _organise();
       showCupertinoModalPopup(
           context: context,
+          barrierDismissible: false,
           builder: (BuildContext context) {
             return _builders[targetNavigation](context, parameters);
           });
