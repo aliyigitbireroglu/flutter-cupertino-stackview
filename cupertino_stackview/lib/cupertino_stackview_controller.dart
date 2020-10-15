@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:cupertino_stackview/cupertino_stackview.dart';
 import 'package:cupertino_stackview/misc.dart';
+import 'package:flutter/material.dart';
 
 ///The class that is responsible of all Cupertino StackView related logic.
 class CupertinoStackViewController {
@@ -147,9 +148,16 @@ class CupertinoStackViewController {
       _organise();
       showCupertinoModalPopup(
           context: context,
-          barrierDismissible: false,
           builder: (BuildContext context) {
-            return _builders[targetNavigation](context, parameters);
+            return Stack (
+              children: [
+                Container (
+                  constraints: BoxConstraints.expand(),
+                  color: Colors.transparent,
+                ),
+                _builders[targetNavigation](context, parameters),
+              ],
+            );
           });
     }
   }
