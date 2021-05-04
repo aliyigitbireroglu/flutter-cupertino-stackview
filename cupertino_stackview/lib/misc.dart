@@ -9,7 +9,7 @@
 import 'package:cupertino_stackview/cupertino_stackview_controller.dart';
 
 ///See [CupertinoStackViewController].
-CupertinoStackViewController cupertinoStackViewController;
+late CupertinoStackViewController cupertinoStackViewController;
 
 final double cupertinoStackViewScaleFraction = 2540.0 / 2688.0;
 final double cupertinoStackViewFirstOffsetFraction = 180.0 / 2688.0;

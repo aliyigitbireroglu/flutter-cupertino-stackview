@@ -1,3 +1,7 @@
+## [2.0.0] - 04.05.2021
+
+* Migrated to Null Safety.
+
 ## [1.0.8] - 15.10.2020
 
 * Minor changes.

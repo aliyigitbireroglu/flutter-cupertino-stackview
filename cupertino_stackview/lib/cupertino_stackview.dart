@@ -42,17 +42,17 @@ class CupertinoStackView extends StatefulWidget {
   final bool ignoreRadiusWhenFront;
 
   ///Callback for when this [CupertinoStackView] moves.
-  final Function(CupertinoStackViewStatus) onMoved;
+  final Function(CupertinoStackViewStatus)? onMoved;
 
   ///Callback for when this [CupertinoStackView] is dismissed.
-  final Function onDismissed;
+  final Function? onDismissed;
 
   const CupertinoStackView(
     this._isPrimary,
     this._navigation,
     this._child,
     this._backgroundColor, {
-    Key key,
+    Key? key,
     this.siblingNavigation: "",
     this.isDismissible: true,
     this.radius: const Radius.circular(10.0),
@@ -69,11 +69,11 @@ class CupertinoStackView extends StatefulWidget {
 
 class CupertinoStackViewState extends State<CupertinoStackView> with SingleTickerProviderStateMixin {
   final GlobalKey _dismissible = GlobalKey();
-  AnimationController _animationController;
-  Animation<double> _scale;
-  Animation<Offset> _firstOffset;
-  Animation<Offset> _secondOffset;
-  CupertinoStackViewStatus _currentStatus;
+  late AnimationController _animationController;
+  late Animation<double> _scale;
+  late Animation<Offset> _firstOffset;
+  late Animation<Offset> _secondOffset;
+  CupertinoStackViewStatus? _currentStatus;
 
   double get _radius => widget.radius.x;
   double get _dynamicRadius => _radius * _animationController.value.clamp(0.0, 1.0);
@@ -168,14 +168,14 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
         break;
     }
     if (widget.onMoved != null) {
-      widget.onMoved(targetStatus);
+      widget.onMoved!(targetStatus);
     }
   }
 
   Future<bool> _isDismissed(DismissDirection dismissDirection) async {
     cupertinoStackViewController.back(navigation: widget._navigation, isDismissed: true);
     if (widget.onDismissed != null) {
-      widget.onDismissed();
+      widget.onDismissed!();
     }
     return false;
   }
@@ -188,7 +188,7 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
           ? AnimatedBuilder(
               animation: _animationController,
               child: widget._child,
-              builder: (BuildContext buildContext, Widget cachedWidget) {
+              builder: (BuildContext buildContext, Widget? cachedWidget) {
                 return _Clipper(
                   cachedWidget,
                   widget._backgroundColor,
@@ -207,7 +207,7 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
                         ? AnimatedBuilder(
                             animation: _animationController,
                             child: widget._child,
-                            builder: (BuildContext buildContext, Widget cachedWidget) {
+                            builder: (BuildContext buildContext, Widget? cachedWidget) {
                               return _Clipper(
                                 cachedWidget,
                                 widget._backgroundColor,
@@ -227,7 +227,7 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
                       ? AnimatedBuilder(
                           animation: _animationController,
                           child: widget._child,
-                          builder: (BuildContext buildContext, Widget cachedWidget) {
+                          builder: (BuildContext buildContext, Widget? cachedWidget) {
                             return _Clipper(
                               cachedWidget,
                               widget._backgroundColor,
@@ -241,7 +241,7 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
                           widget.radius,
                         ),
                 ),
-      builder: (BuildContext context, Widget cachedWidget) {
+      builder: (BuildContext context, Widget? cachedWidget) {
         return Transform.translate(
           offset: _animationController.value < 0.5 ? _firstOffset.value : _secondOffset.value,
           child: Transform.scale(
@@ -256,7 +256,7 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
 }
 
 class _Clipper extends StatelessWidget {
-  final Widget _child;
+  final Widget? _child;
   final Color _backgroundColor;
   final Radius _radius;
 

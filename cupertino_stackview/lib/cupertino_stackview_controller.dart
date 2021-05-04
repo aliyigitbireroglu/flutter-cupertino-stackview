@@ -24,23 +24,23 @@ class CupertinoStackViewController {
   final Duration duration;
 
   ///See [initialise].
-  double height;
+  late double height;
 
   ///See [initialise].
-  double width;
+  double? width;
 
-  final List<_ListPair> _map = List<_ListPair>();
-  final List<_ListPair> _siblingMap = List<_ListPair>();
-  final Map<String, BuildContext> _contexts = Map<String, BuildContext>();
+  final List<_ListPair> _map = [];
+  final List<_ListPair> _siblingMap = [];
+  final Map<String, BuildContext?> _contexts = Map<String, BuildContext?>();
 
   String get currentNavigation => _map.first._navigation;
-  BuildContext get currentContext => _contexts[currentNavigation];
+  BuildContext? get currentContext => _contexts[currentNavigation];
 
   ///Callback for when any [CupertinoStackView] moves.
-  final Function(String, CupertinoStackViewStatus) onMoved;
+  final Function(String, CupertinoStackViewStatus)? onMoved;
 
   ///Callback for when any [CupertinoStackView] is dismissed.
-  final Function(String) onDismissed;
+  final Function(String?)? onDismissed;
 
   CupertinoStackViewController(
     this._navigatorState,
@@ -89,9 +89,19 @@ class CupertinoStackViewController {
     int _index = 0;
     for (int i = 0; i < _map.length; i++) {
       if (_map[i]._cupertinoStackViewState != null) {
-        _map[i]._cupertinoStackViewState.move(_index == 0 ? CupertinoStackViewStatus.FRONT : _index == 1 ? CupertinoStackViewStatus.BACK : CupertinoStackViewStatus.DISAPPEAR);
+        _map[i]._cupertinoStackViewState!.move(_index == 0
+            ? CupertinoStackViewStatus.FRONT
+            : _index == 1
+                ? CupertinoStackViewStatus.BACK
+                : CupertinoStackViewStatus.DISAPPEAR);
         if (onMoved != null) {
-          onMoved(_map[i]._navigation, _index == 0 ? CupertinoStackViewStatus.FRONT : _index == 1 ? CupertinoStackViewStatus.BACK : CupertinoStackViewStatus.DISAPPEAR);
+          onMoved!(
+              _map[i]._navigation,
+              _index == 0
+                  ? CupertinoStackViewStatus.FRONT
+                  : _index == 1
+                      ? CupertinoStackViewStatus.BACK
+                      : CupertinoStackViewStatus.DISAPPEAR);
         }
         if (_hasSibling(_map[i]._navigation)) {
           _organiseSiblings(_map[i]._navigation, _index);
@@ -105,9 +115,19 @@ class CupertinoStackViewController {
     List<_ListPair> _siblings = _siblingMap.where((_ListPair navigationStackStatePair) => navigationStackStatePair._navigation == navigation).toList();
     for (int i = 0; i < _siblings.length; i++) {
       if (_siblings[i]._cupertinoStackViewState != null) {
-        _siblings[i]._cupertinoStackViewState.move(index == 0 ? CupertinoStackViewStatus.FRONT : index == 1 ? CupertinoStackViewStatus.BACK : CupertinoStackViewStatus.DISAPPEAR);
+        _siblings[i]._cupertinoStackViewState!.move(index == 0
+            ? CupertinoStackViewStatus.FRONT
+            : index == 1
+                ? CupertinoStackViewStatus.BACK
+                : CupertinoStackViewStatus.DISAPPEAR);
         if (onMoved != null) {
-          onMoved(_siblings[i]._navigation, index == 0 ? CupertinoStackViewStatus.FRONT : index == 1 ? CupertinoStackViewStatus.BACK : CupertinoStackViewStatus.DISAPPEAR);
+          onMoved!(
+              _siblings[i]._navigation,
+              index == 0
+                  ? CupertinoStackViewStatus.FRONT
+                  : index == 1
+                      ? CupertinoStackViewStatus.BACK
+                      : CupertinoStackViewStatus.DISAPPEAR);
         }
       }
     }
@@ -116,7 +136,7 @@ class CupertinoStackViewController {
   ///Use this method to go back to the primary [CupertinoStackView] in the Cupertino StackView system.
   Future backToPrimary() async {
     while (_map.length != 1) {
-      _navigatorState.currentState.pop();
+      _navigatorState.currentState!.pop();
       _contexts.remove(currentNavigation);
       _map.removeAt(0);
       _organise();
@@ -125,18 +145,18 @@ class CupertinoStackViewController {
   }
 
   ///Use this method to go back one [CupertinoStackView] in the Cupertino StackView system.
-  Future back({String navigation, bool isDismissed: false}) async {
+  Future back({String? navigation, bool isDismissed: false}) async {
     await navigate(_map[1]._navigation, null, null);
     if (isDismissed && onDismissed != null) {
-      onDismissed(navigation);
+      onDismissed!(navigation);
     }
   }
 
   ///Use this method to go to a [CupertinoStackView] in the Cupertino StackView system.
-  Future navigate(String targetNavigation, BuildContext context, dynamic parameters) async {
+  Future navigate(String targetNavigation, BuildContext? context, dynamic parameters) async {
     if (_isMapped(targetNavigation)) {
       while (_map.first._navigation != targetNavigation) {
-        _navigatorState.currentState.pop();
+        _navigatorState.currentState!.pop();
         _contexts.remove(currentNavigation);
         _map.removeAt(0);
         _organise();
@@ -147,15 +167,15 @@ class CupertinoStackViewController {
       _contexts[targetNavigation] = context;
       _organise();
       showCupertinoModalPopup(
-          context: context,
+          context: context!,
           builder: (BuildContext context) {
-            return Stack (
+            return Stack(
               children: [
-                Container (
+                Container(
                   constraints: BoxConstraints.expand(),
                   color: Colors.transparent,
                 ),
-                _builders[targetNavigation](context, parameters),
+                _builders[targetNavigation]!(context, parameters),
               ],
             );
           });
@@ -165,7 +185,7 @@ class CupertinoStackViewController {
 
 class _ListPair {
   final String _navigation;
-  CupertinoStackViewState _cupertinoStackViewState;
+  CupertinoStackViewState? _cupertinoStackViewState;
 
   _ListPair(
     this._navigation,

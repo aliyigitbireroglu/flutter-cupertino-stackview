@@ -83,7 +83,7 @@ class MyPage extends StatefulWidget {
 
   MyPage(
     this.index, {
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -277,7 +277,7 @@ class MyPadding extends StatelessWidget {
 
   const MyPadding(
     this._child, {
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
