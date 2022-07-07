@@ -1,16 +1,6 @@
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  © Cosmos Software | Ali Yigit Bireroglu                                                                                                          /
-//  All material used in the making of this code, project, program, application, software et cetera (the "Intellectual Property")                    /
-//  belongs completely and solely to Ali Yigit Bireroglu. This includes but is not limited to the source code, the multimedia and                    /
-//  other asset files.                                                                                                                               /
-//  If you were granted this Intellectual Property for personal use, you are obligated to include this copyright text at all times.                  /
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-
-import 'package:spring_button/spring_button.dart';
 import 'package:cupertino_stackview/cupertino_stackview.dart';
+import 'package:flutter/material.dart';
+import 'package:spring_button/spring_button.dart';
 
 GlobalKey<NavigatorState> navigatorState = GlobalKey<NavigatorState>();
 
@@ -93,11 +83,12 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
-    cupertinoStackViewController.initialise(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width);
+    cupertinoStackViewController.initialise(
+        MediaQuery.of(context).size.height, MediaQuery.of(context).size.width);
     return CupertinoStackView(
-      widget.index == 0,
-      pageInfos[widget.index].navigation,
-      Scaffold(
+      isPrimary: widget.index == 0,
+      navigation: pageInfos[widget.index].navigation,
+      child: Scaffold(
         backgroundColor: const Color(0xFFF2F2F7),
         appBar: AppBar(
           backgroundColor: const Color(0xFFF9F9F9),
@@ -132,7 +123,8 @@ class _MyPageState extends State<MyPage> {
                     Container(
                       constraints: BoxConstraints.expand(height: 200),
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(const Radius.circular(20)),
+                        borderRadius:
+                            const BorderRadius.all(const Radius.circular(20)),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black,
@@ -143,7 +135,8 @@ class _MyPageState extends State<MyPage> {
                       ),
                     ),
                     ClipRRect(
-                      borderRadius: const BorderRadius.all(const Radius.circular(20)),
+                      borderRadius:
+                          const BorderRadius.all(const Radius.circular(20)),
                       child: Container(
                         constraints: BoxConstraints.expand(height: 200),
                         decoration: BoxDecoration(
@@ -199,7 +192,8 @@ class _MyPageState extends State<MyPage> {
                         width: 175,
                         decoration: const BoxDecoration(
                           color: const Color(0xFF1B1D1E),
-                          borderRadius: const BorderRadius.all(const Radius.circular(20)),
+                          borderRadius:
+                              const BorderRadius.all(const Radius.circular(20)),
                         ),
                         child: Center(
                           child: Text(
@@ -214,7 +208,10 @@ class _MyPageState extends State<MyPage> {
                       ),
                       useCache: true,
                       onTapUp: (_) {
-                        cupertinoStackViewController.navigate(pageInfos[widget.index + 1].navigation, context, null);
+                        cupertinoStackViewController.navigate(
+                            pageInfos[widget.index + 1].navigation,
+                            context,
+                            null);
                       },
                     ),
                   ),
@@ -230,7 +227,8 @@ class _MyPageState extends State<MyPage> {
                         width: 175,
                         decoration: const BoxDecoration(
                           color: const Color(0xFF1B1D1E),
-                          borderRadius: const BorderRadius.all(const Radius.circular(20)),
+                          borderRadius:
+                              const BorderRadius.all(const Radius.circular(20)),
                         ),
                         child: Center(
                           child: Text(
@@ -245,7 +243,8 @@ class _MyPageState extends State<MyPage> {
                       ),
                       useCache: true,
                       onTapUp: (_) {
-                        cupertinoStackViewController.navigate(pageInfos[0].navigation, context, null);
+                        cupertinoStackViewController.navigate(
+                            pageInfos[0].navigation, context, null);
                       },
                     ),
                   ),
@@ -254,7 +253,7 @@ class _MyPageState extends State<MyPage> {
           ),
         ),
       ),
-      Colors.black,
+      backgroundColor: Colors.black,
       isDismissible: widget.index != pageInfos.length - 1,
     );
   }
