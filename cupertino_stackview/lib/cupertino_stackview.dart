@@ -67,7 +67,8 @@ class CupertinoStackView extends StatefulWidget {
   }
 }
 
-class CupertinoStackViewState extends State<CupertinoStackView> with SingleTickerProviderStateMixin {
+class CupertinoStackViewState extends State<CupertinoStackView>
+    with SingleTickerProviderStateMixin {
   final GlobalKey _dismissible = GlobalKey();
   late AnimationController _animationController;
   late Animation<double> _scale;
@@ -76,8 +77,11 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
   CupertinoStackViewStatus? _currentStatus;
 
   double get _radius => widget.radius.x;
-  double get _dynamicRadius => _radius * _animationController.value.clamp(0.0, 1.0);
-  Radius get _realRadius => widget.isPrimary || widget.ignoreRadiusWhenFront ? Radius.circular(_dynamicRadius) : widget.radius;
+  double get _dynamicRadius =>
+      _radius * _animationController.value.clamp(0.0, 1.0);
+  Radius get _realRadius => widget.isPrimary || widget.ignoreRadiusWhenFront
+      ? Radius.circular(_dynamicRadius)
+      : widget.radius;
 
   @override
   void initState() {
@@ -102,7 +106,12 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
       ),
     );
     _firstOffset = Tween<Offset>(
-      begin: widget._isPrimary ? Offset.zero : Offset(0.0, cupertinoStackViewFirstOffsetFraction * cupertinoStackViewController.height),
+      begin: widget._isPrimary
+          ? Offset.zero
+          : Offset(
+              0.0,
+              cupertinoStackViewFirstOffsetFraction *
+                  cupertinoStackViewController.height),
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
@@ -116,7 +125,10 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
     );
     _secondOffset = Tween<Offset>(
       begin: Offset.zero,
-      end: Offset(0.0, cupertinoStackViewSecondOffsetFraction * cupertinoStackViewController.height),
+      end: Offset(
+          0.0,
+          cupertinoStackViewSecondOffsetFraction *
+              cupertinoStackViewController.height),
     ).animate(
       CurvedAnimation(
         parent: _animationController,
@@ -131,7 +143,8 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
     if (widget.siblingNavigation.isEmpty) {
       cupertinoStackViewController.introduce(widget._navigation, this);
     } else {
-      cupertinoStackViewController.introduceAsSibling(widget.siblingNavigation, this);
+      cupertinoStackViewController.introduceAsSibling(
+          widget.siblingNavigation, this);
     }
   }
 
@@ -151,6 +164,8 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
         break;
       case CupertinoStackViewStatus.DISAPPEAR:
         _animationController.value = 1.0;
+        break;
+      case null:
         break;
     }
 
@@ -173,7 +188,8 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
   }
 
   Future<bool> _isDismissed(DismissDirection dismissDirection) async {
-    cupertinoStackViewController.back(navigation: widget._navigation, isDismissed: true);
+    cupertinoStackViewController.back(
+        navigation: widget._navigation, isDismissed: true);
     if (widget.onDismissed != null) {
       widget.onDismissed!();
     }
@@ -207,7 +223,8 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
                         ? AnimatedBuilder(
                             animation: _animationController,
                             child: widget._child,
-                            builder: (BuildContext buildContext, Widget? cachedWidget) {
+                            builder: (BuildContext buildContext,
+                                Widget? cachedWidget) {
                               return _Clipper(
                                 cachedWidget,
                                 widget._backgroundColor,
@@ -227,7 +244,8 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
                       ? AnimatedBuilder(
                           animation: _animationController,
                           child: widget._child,
-                          builder: (BuildContext buildContext, Widget? cachedWidget) {
+                          builder: (BuildContext buildContext,
+                              Widget? cachedWidget) {
                             return _Clipper(
                               cachedWidget,
                               widget._backgroundColor,
@@ -243,7 +261,9 @@ class CupertinoStackViewState extends State<CupertinoStackView> with SingleTicke
                 ),
       builder: (BuildContext context, Widget? cachedWidget) {
         return Transform.translate(
-          offset: _animationController.value < 0.5 ? _firstOffset.value : _secondOffset.value,
+          offset: _animationController.value < 0.5
+              ? _firstOffset.value
+              : _secondOffset.value,
           child: Transform.scale(
             scale: _scale.value,
             alignment: const Alignment(0.0, 1.0),
@@ -296,7 +316,8 @@ class _Positioner extends StatelessWidget {
           top: 0.0,
           left: 0.0,
           width: cupertinoStackViewController.width,
-          height: cupertinoStackViewSecondHeightFraction * cupertinoStackViewController.height,
+          height: cupertinoStackViewSecondHeightFraction *
+              cupertinoStackViewController.height,
           child: _child,
         )
       ],
